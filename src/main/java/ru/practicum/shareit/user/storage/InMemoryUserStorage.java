@@ -27,26 +27,17 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User save(User user) {
-
-        checkEmailUniqueness(user.getEmail(), null);
-
-        if (user.getId() == null) {
-            user.setId(getNextId());
-        }
-        users.put(user.getId(), user);
-        return user;
-    }
-
-    @Override
     public User createUser(User user) {
-        log.info("Попытка создания фильма: {}", user.getName());
+        log.info("Попытка создания пользователя: {}", user.getName());
 
         validateUser(user);
-
+        if (existsByEmail(user.getEmail())) {
+            throw new DuplicatedDataException("Email " + user.getEmail() + " уже используется");
+        }
         user.setId(getNextId());
-        log.info("Пользователь успешно добавлен: {}", user.getName());
+
         users.put(user.getId(), user);
+        log.info("Пользователь успешно добавлен: {}", user.getName());
         return user;
     }
 
@@ -64,14 +55,14 @@ public class InMemoryUserStorage implements UserStorage {
         }
 
         if (newUser.getEmail() != null && !newUser.getEmail().equals(existingUser.getEmail())) {
-            checkEmailUniqueness(newUser.getEmail(), newUser.getId());
+            if (existsByEmail(newUser.getEmail())) {
+                throw new DuplicatedDataException("Email " + newUser.getEmail() + " уже используется");
+            }
+            existingUser.setEmail(newUser.getEmail());
         }
 
         if (newUser.getName() != null) {
             existingUser.setName(newUser.getName());
-        }
-        if (newUser.getEmail() != null) {
-            existingUser.setEmail(newUser.getEmail());
         }
 
         log.info("Пользователь с id = {} успешно обновлён", newUser.getId());
@@ -112,6 +103,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new DuplicatedDataException("Email " + email + " уже используется");
         }
     }
+
     @Override
     public void deleteById(Long id) {
         log.info("Удаление пользователя с id: {}", id);

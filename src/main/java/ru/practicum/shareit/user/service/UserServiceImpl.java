@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private final UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Override
     public Collection<UserDto> getAllUsers() {
@@ -38,10 +38,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
 
-            log.info("Создание пользователя: {}", userDto.getName());
-            User user = UserMapper.toUser(userDto);
-            User savedUser = userStorage.save(user);
-            return UserMapper.toUserDto(savedUser);
+        log.info("Создание пользователя: {}", userDto.getName());
+        User user = UserMapper.toUser(userDto);
+        User savedUser = userStorage.createUser(user);
+        return UserMapper.toUserDto(savedUser);
     }
 
     @Override

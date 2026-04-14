@@ -5,13 +5,13 @@ import java.util.Collection;
 
  public interface UserService {
 
-    Collection<UserDto> getAllUsers();
+     Collection<UserDto> getAllUsers();
 
      UserDto getUserById(Long id);
 
-    UserDto createUser(UserDto userDto);
+     UserDto createUser(UserDto userDto);
 
      UserDto updateUser(Long id, UserDto newUser);
 
      void deleteUser(Long id);
-}
+ }
