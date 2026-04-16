@@ -10,27 +10,29 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
+    private static final String ERROR_KEY = "Ошибка";
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(NotFoundException e) {
-        return Map.of("ошибка", e.getMessage());
+        return Map.of(ERROR_KEY, e.getMessage());
     }
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(ValidationException e) {
-        return Map.of("ошибка", e.getMessage());
+        return Map.of(ERROR_KEY, e.getMessage());
     }
 
     @ExceptionHandler(DuplicatedDataException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleDuplicatedData(DuplicatedDataException e) {
-        return Map.of("ошибка", e.getMessage());
+        return Map.of(ERROR_KEY, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleOther(Exception e) {
-        return Map.of("ошибка", "Произошла непредвиденная ошибка");
+        return Map.of(ERROR_KEY, "Произошла непредвиденная ошибка");
     }
 }

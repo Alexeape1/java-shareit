@@ -16,8 +16,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<UserDto> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Collection<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{userId}")
@@ -28,17 +28,20 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody UserDto user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto user) {
+        UserDto createUser = userService.createUser(user);
+        return ResponseEntity.ok(createUser);
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @RequestBody UserDto user) {
-        return userService.updateUser(id, user);
+    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto user) {
+        UserDto updateUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updateUser);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.ok().build();
     }
 }
