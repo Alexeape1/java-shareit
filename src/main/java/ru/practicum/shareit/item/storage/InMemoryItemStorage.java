@@ -10,6 +10,7 @@ import ru.practicum.shareit.validation.ValidationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
 @Repository
 @Slf4j
 @RequiredArgsConstructor

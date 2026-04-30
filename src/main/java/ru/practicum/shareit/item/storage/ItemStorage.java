@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public interface ItemStorage {
 
     Item save(Item item);

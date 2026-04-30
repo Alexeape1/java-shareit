@@ -3,10 +3,11 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.validation.NotFoundException;
 
 import java.util.Collection;
@@ -15,14 +16,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
 
     @Override
     public Collection<UserDto> getAllUsers() {
         log.info("Получение всех пользователей");
-        return userStorage.findAllUser().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
@@ -30,37 +32,45 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         log.info("Получение пользователя с id: {}", id);
-        User user = userStorage.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User с id = " + id + " не найден"));
         return UserMapper.toUserDto(user);
     }
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto userDto) {
-
         log.info("Создание пользователя: {}", userDto.getName());
+
         User user = UserMapper.toUser(userDto);
-        User savedUser = userStorage.createUser(user);
+        User savedUser = userRepository.save(user);
+
         return UserMapper.toUserDto(savedUser);
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Long id, UserDto newUser) {
         log.info("Обновление пользователя с id: {}", id);
 
-        User userForUpdate = User.builder()
-                .id(id)
-                .name(newUser.getName())
-                .email(newUser.getEmail())
-                .build();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + id + " не найден"));
 
-        User updatedUser = userStorage.updateUser(userForUpdate);
+        if (newUser.getName() != null && !newUser.getName().isBlank()) {
+            user.setName(newUser.getName());
+        }
+        if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
+            user.setEmail(newUser.getEmail());
+        }
+
+        User updatedUser = userRepository.save(user);
         return UserMapper.toUserDto(updatedUser);
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         log.info("Удаление пользователя с id: {}", id);
-        userStorage.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
