@@ -32,9 +32,8 @@ public class ItemRequest {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        ItemRequest that = (ItemRequest) o;
-        return id == that.id && Objects.equals(description, that.description)
-                && Objects.equals(requestor, that.requestor) && Objects.equals(created, that.created);
+        ItemRequest itemRequest = (ItemRequest) o;
+        return Objects.equals(id, itemRequest.id);
     }
 
     @Override
