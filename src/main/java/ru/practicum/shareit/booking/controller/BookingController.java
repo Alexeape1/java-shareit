@@ -18,23 +18,23 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    ResponseEntity<BookingResponseDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                              @Valid @RequestBody BookingPostDto bookingDto) {
+    public ResponseEntity<BookingResponseDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                     @Valid @RequestBody BookingPostDto bookingDto) {
         BookingResponseDto createBooking = bookingService.create(userId, bookingDto);
         return ResponseEntity.ok(createBooking);
     }
 
     @PatchMapping("/{bookingId}")
-    ResponseEntity<BookingResponseDto> approve(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                               @PathVariable Long bookingId,
-                                               @RequestParam Boolean approved) {
+    public ResponseEntity<BookingResponseDto> approve(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                      @PathVariable Long bookingId,
+                                                      @RequestParam Boolean approved) {
         BookingResponseDto bookingResponseDto = bookingService.approve(userId, bookingId, approved);
         return ResponseEntity.ok(bookingResponseDto);
     }
 
     @GetMapping("/{bookingId}")
-    ResponseEntity<BookingResponseDto> findByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                    @PathVariable Long bookingId) {
+    public ResponseEntity<BookingResponseDto> findByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                           @PathVariable Long bookingId) {
         BookingResponseDto response = bookingService.getById(userId, bookingId);
         return ResponseEntity.ok(response);
     }
