@@ -1,14 +1,14 @@
 package ru.practicum.shareit.item;
 
-
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.User;
 
 @Component
 public class ItemMapper {
 
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         if (item == null) {
             return null;
         }
@@ -20,19 +20,6 @@ public class ItemMapper {
                 .available(item.getAvailable())
                 .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
-    }
-
-    public Item toItem(ItemDto itemDto) {
-        if (itemDto == null) {
-            return null;
-        }
-
-        Item item = new Item();
-        item.setId(itemDto.getId());
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        return item;
     }
 
     public Item toEntity(ItemDto itemDto, User owner) {
@@ -55,5 +42,18 @@ public class ItemMapper {
         if (updates.getAvailable() != null) {
             existing.setAvailable(updates.getAvailable());
         }
+    }
+
+    public CommentDto toCommentDto(Comment comment) {
+        if (comment == null) {
+            return null;
+        }
+
+        return CommentDto.builder()
+                .id(comment.getId())
+                .text(comment.getText())
+                .authorName(comment.getAuthor().getName())
+                .created(comment.getCreated())
+                .build();
     }
 }
