@@ -55,11 +55,11 @@ public class ItemServiceImpl implements ItemService {
                     .orElseThrow(() -> new NotFoundException("Item request not found: " + itemDto.getRequestId()));
             item.setRequest(request);
         }
-            Item savedItem = itemRepository.save(item);
+        Item savedItem = itemRepository.save(item);
 
-            log.info("Item успешно добавлен с id={}", savedItem.getId());
-            return itemMapper.toItemDto(savedItem);
-        }
+        log.info("Item успешно добавлен с id={}", savedItem.getId());
+        return itemMapper.toItemDto(savedItem);
+    }
 
 
     @Override
@@ -117,7 +117,6 @@ public class ItemServiceImpl implements ItemService {
                         itemDto.setNextBooking(nextBooking);
                     });
         }
-
         return itemDto;
     }
 
@@ -142,6 +141,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return itemRepository.search(text).stream()
+                .filter(Item::getAvailable)
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

@@ -76,7 +76,6 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
-
     @Override
     public BookingResponseDto getById(Long userId, Long bookingId) {
 
@@ -91,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookingMapper.toBookingDto(booking);
     }
+
 
     @Override
     public List<BookingResponseDto> getAllByBooker(Long userId, String state) {

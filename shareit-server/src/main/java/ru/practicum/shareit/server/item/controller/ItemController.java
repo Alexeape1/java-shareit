@@ -26,7 +26,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemDto> findById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                            @PathVariable Long id) {
+                                            @PathVariable("id") Long id) {
         ItemDto findId = itemService.findById(userId, id);
         return ResponseEntity.ok(findId);
     }
@@ -40,7 +40,7 @@ public class ItemController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @PathVariable Long id,
+                                          @PathVariable("id") Long id,
                                           @RequestBody ItemDto itemDto) {
         ItemDto updateItem = itemService.update(userId, id, itemDto);
         return ResponseEntity.ok(updateItem);
@@ -55,7 +55,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDto> addComment(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @PathVariable Long itemId,
+            @PathVariable("itemId") Long itemId,
             @RequestBody Map<String, String> body) {
 
         String text = body.get("text");

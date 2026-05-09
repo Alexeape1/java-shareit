@@ -3,59 +3,44 @@ package ru.practicum.shareit.gateway.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import ru.practicum.shareit.gateway.user.client.UserClient;
 import ru.practicum.shareit.gateway.user.dto.UserDto;
 
-@RestController
-@RequestMapping("/users")
+@Controller
+@RequestMapping(path = "/users")
 @RequiredArgsConstructor
-@Slf4j
+@Validated
 public class UserGatewayController {
 
-    private final RestTemplate restTemplate;
-
-    @Value("${server.url}")
-    private String serverUrl;
+    private final UserClient userClient;
 
     @GetMapping
     public ResponseEntity<Object> getAllUsers() {
-        log.info("Gateway: GET /users");
-        return restTemplate.getForEntity(serverUrl + "/users", Object.class);
+        return userClient.getAllUsers();
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getUserById(@PathVariable Long userId) {
-        log.info("Gateway: GET /users/{}", userId);
-        return restTemplate.getForEntity(serverUrl + "/users/{userId}", Object.class, userId);
+    public ResponseEntity<Object> getUserById(@PathVariable("userId") Long userId) {
+        return userClient.getUserById(userId);
     }
 
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
-        log.info("Gateway: POST /users, email={}", userDto.getEmail());
-        return restTemplate.postForEntity(serverUrl + "/users", userDto, Object.class);
+        return userClient.createUser(userDto);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-        log.info("Gateway: PATCH /users/{}", id);
-        org.springframework.http.HttpEntity<UserDto> entity =
-                new org.springframework.http.HttpEntity<>(userDto);
-        return restTemplate.exchange(
-                serverUrl + "/users/{id}",
-                org.springframework.http.HttpMethod.PATCH,
-                entity,
-                Object.class,
-                id
-        );
+    @PatchMapping("/{userId}")
+    public ResponseEntity<Object> updateUser(@PathVariable("userId") Long userId,
+                                             @RequestBody UserDto userDto) {
+        ResponseEntity<Object> response = userClient.updateUser(userId, userDto);
+        return response;
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-        log.info("Gateway: DELETE /users/{}", id);
-        restTemplate.delete(serverUrl + "/users/{id}", id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) {
+        return userClient.deleteUser(userId);
     }
 }

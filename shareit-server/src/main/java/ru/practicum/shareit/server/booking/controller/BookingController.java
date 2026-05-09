@@ -25,29 +25,29 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<BookingResponseDto> approve(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                      @PathVariable Long bookingId,
-                                                      @RequestParam Boolean approved) {
+                                                      @PathVariable("bookingId") Long bookingId,
+                                                      @RequestParam("approved") Boolean approved) {
         BookingResponseDto bookingResponseDto = bookingService.approve(userId, bookingId, approved);
         return ResponseEntity.ok(bookingResponseDto);
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<BookingResponseDto> findByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                           @PathVariable Long bookingId) {
+                                                           @PathVariable("bookingId") Long bookingId) {
         BookingResponseDto response = bookingService.getById(userId, bookingId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<List<BookingResponseDto>> getAllByBooker(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                                   @RequestParam(defaultValue = "ALL") String state) {
+                                                                   @RequestParam(value = "state", defaultValue = "ALL") String state) {
         return ResponseEntity.ok(bookingService.getAllByBooker(userId, state));
     }
 
     @GetMapping("/owner")
     public ResponseEntity<List<BookingResponseDto>> getAllByOwner(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(defaultValue = "ALL") String state) {
+            @RequestParam(value = "state", defaultValue = "ALL") String state) {
         return ResponseEntity.ok(bookingService.getAllByOwner(userId, state));
     }
 }

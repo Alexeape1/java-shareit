@@ -2,75 +2,55 @@ package ru.practicum.shareit.gateway.item.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import ru.practicum.shareit.gateway.item.client.ItemClient;
 import ru.practicum.shareit.gateway.item.dto.CommentRequestDto;
 import ru.practicum.shareit.gateway.item.dto.ItemDto;
 
-@RestController
-@RequestMapping("/items")
+@Controller
+@RequestMapping(path = "/items")
 @RequiredArgsConstructor
-@Slf4j
+@Validated
 public class ItemGatewayController {
 
-    private final RestTemplate restTemplate;
-
-    @Value("${server.url}")
-    private String serverUrl;
+    private final ItemClient itemClient;
 
     @GetMapping
-    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Gateway: GET /items for user {}", userId);
-        return restTemplate.getForEntity(serverUrl + "/items?userId={userId}", Object.class, userId);
+    public ResponseEntity<Object> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemClient.getItems(userId);
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                              @PathVariable Long itemId) {
-        log.info("Gateway: GET /items/{} for user {}", itemId, userId);
-        return restTemplate.getForEntity(serverUrl + "/items/{itemId}?userId={userId}",
-                Object.class, itemId, userId);
+    public ResponseEntity<Object> getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                              @PathVariable("itemId") Long itemId) {
+        return itemClient.getItemById(userId, itemId);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @Valid @RequestBody ItemDto itemDto) {
-        log.info("Gateway: POST /items for user {}", userId);
-        return restTemplate.postForEntity(serverUrl + "/items?userId={userId}", itemDto, Object.class, userId);
+        return itemClient.createItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @PathVariable Long itemId,
+    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                             @PathVariable("itemId") Long itemId,
                                              @RequestBody ItemDto itemDto) {
-        log.info("Gateway: PATCH /items/{} for user {}", itemId, userId);
-        org.springframework.http.HttpEntity<ItemDto> entity =
-                new org.springframework.http.HttpEntity<>(itemDto);
-        return restTemplate.exchange(
-                serverUrl + "/items/{itemId}?userId={userId}",
-                org.springframework.http.HttpMethod.PATCH,
-                entity,
-                Object.class,
-                itemId, userId
-        );
+        return itemClient.updateItem(userId, itemId, itemDto);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(@RequestParam String text) {
-        log.info("Gateway: GET /items/search?text={}", text);
-        return restTemplate.getForEntity(serverUrl + "/items/search?text={text}", Object.class, text);
+    public ResponseEntity<Object> searchItems(@RequestParam String text) {
+        return itemClient.searchItems(text);
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @PathVariable Long itemId,
+    public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                             @PathVariable("itemId") Long itemId,
                                              @Valid @RequestBody CommentRequestDto commentDto) {
-        log.info("Gateway: POST /items/{}/comment for user {}", itemId, userId);
-        return restTemplate.postForEntity(
-                serverUrl + "/items/{itemId}/comment?userId={userId}",
-                commentDto, Object.class, itemId, userId);
+        return itemClient.addComment(userId, itemId, commentDto);
     }
 }

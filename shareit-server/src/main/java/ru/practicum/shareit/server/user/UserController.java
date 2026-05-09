@@ -1,6 +1,7 @@
 package ru.practicum.shareit.server.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import ru.practicum.shareit.server.user.service.UserService;
 
 import java.util.Collection;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> findById(@PathVariable long userId) {
+    public ResponseEntity<UserDto> findById(@PathVariable("userId") long userId) {
         UserDto user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
     }
@@ -34,13 +36,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto user) {
+    public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody UserDto user) {
         UserDto updateUser = userService.updateUser(id, user);
         return ResponseEntity.ok(updateUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
