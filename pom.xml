@@ -13,8 +13,8 @@
     <name>ShareIt Parent</name>
 
     <modules>
-        <module>shareit-gateway</module>
-        <module>shareit-server</module>
+        <module>gateway</module>
+        <module>server</module>
     </modules>
 
     <properties>
